@@ -13,5 +13,5 @@ CC=gcc
 	
 CFLAGS= -pedantic -Wall -O3 -fopenmp -lm -std=c11
 
-cgpde_main: cgpde_main.c cgpdelib.c cgpdelib.h
-	@$(CC) -o cgpde_main cgpde_main.c cgpdelib.c $(CFLAGS)
+main: main.c cgpdelib.c cgpdelib.h
+	@$(CC) -o main main.c cgpdelib.c $(CFLAGS)
