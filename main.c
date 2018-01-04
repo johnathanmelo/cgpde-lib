@@ -30,7 +30,6 @@ int main(void)
     int numInputs = 4;  // attributes
     int numOutputs = 3; // classes
 
-    double targetFitness = -1.0; // minimize -(accuracy) is equivalent to maximize +(accuracy)
     int numThreads = 8;
 
     int numNodes = 500;
@@ -46,7 +45,6 @@ int main(void)
     setCustomFitnessFunction(params, accuracy, "Accuracy");
     addNodeFunction(params, "sig");
     setMutationType(params, "probabilistic");
-    setTargetFitness(params, targetFitness);
     setConnectionWeightRange(params, weightRange);
     setMutationRate(params, mutationRate);
     setNumThreads(params, numThreads);
@@ -237,6 +235,8 @@ int main(void)
     e.g. Consider a chromosome with 3 output nodes, their final values are:
     Output1: 0.25 | Output2: 0.34 | Output3: 0.09
     As Output2 presents the larger value, the instance is labeled as Class #2
+    
+    Here, we aim to minimize -(accuracy), which is equivalent to maximize +(accuracy)
 */
 double accuracy(struct parameters *params, struct chromosome *chromo, struct dataSet *data)
 {
