@@ -155,7 +155,7 @@ int main(void)
             struct chromosome * bestChromo = runCGP(params, trainingData, validationData, numGens_CGP, &seed);
             setChromosomeFitness(params, bestChromo, testingData);
             double testFitness_CGP = getChromosomeFitness(bestChromo);  
-            printf("CGPANN\t%d\t%d\t%.4lf\n", i, j, -testFitness_CGP);
+            printf("CGPANN\t\t%d\t%d\t%.4lf\n", i, j, -testFitness_CGP);
             freeChromosome(bestChromo);  
 
             // Run CGPDE-IN
