@@ -2,7 +2,7 @@
 Modified Version of the CGP Library
 ======
 
-Hybridization of Cartesian Genetic Programming and Differential Evolution to generate Artificial Neural Networks
+Hybridization of Cartesian Genetic Programming and Differential Evolution to generate Artificial Neural Networks. 
 Includes the CGPDE-IN, CGPDE-OUT-T, and CGPDE-OUT-V methods
 
 Author: Johnathan M Melo Neto   
