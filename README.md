@@ -8,7 +8,8 @@ Includes the CGPDE-IN, CGPDE-OUT-T, and CGPDE-OUT-V methods
 Author: Johnathan M Melo Neto
 Email: jmmn.mg@gmail.com
 
-Credits of the original work are placed below:
+Credits of the original work are placed below.
+
 CGP Library
 ======
 
