@@ -4002,6 +4002,13 @@ DLL_EXPORT struct chromosome* runCGPDE_IN(struct parameters *params, struct data
 
 		/* create the children from the parents */
 		params->reproductionScheme(params, parentChromos, childrenChromos, params->mu, params->lambda, 1, seed); // Type 1: CGPDE (do NOT apply weight mutation here)
+	
+		// clear the chromosomes returned by DE 
+	        for (i = 0; i < params->NP_IN; i++) 
+		{ 
+			freeChromosome(populationChromos[i]);
+		}
+		free(populationChromos);
 	}
 
 	/* free parent chromosomes */
