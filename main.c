@@ -29,8 +29,11 @@ int main(void)
     // Initialize general parameters
     int numInputs = 4;  // attributes
     int numOutputs = 3; // classes
+	
+    // Percentage of the sample size utilized: 0 < percentage <= 1
+    double percentage = 1.00;	
 
-    int numThreads = 8;
+    int numThreads = 10;
 
     int numNodes = 500;
     int nodeArity =  20;
@@ -97,7 +100,8 @@ int main(void)
         // Set seed (for reproducibility purpose)
         unsigned int seed = i + 50;
         shuffleData(mainData, &seed);
-        struct dataSet ** folds = generateFolds(mainData);
+        struct dataSet * reducedData = reduceSampleSize(mainData, percentage);        
+	struct dataSet ** folds = generateFolds(reducedData);
 
         #pragma omp parallel for default(none), private(j), shared(i,params,folds,numGens_CGP,numGens_IN,numGens_OUT,f_CGP,f_IN,f_OUT_T,f_OUT_V,NP_OUT), schedule(dynamic), num_threads(numThreads)
         for(j = 0; j < 10; j++) // stratified 10-fold cross-validation
@@ -206,14 +210,14 @@ int main(void)
             free(validation_index);
         }
 
-        // Clear folds
+        // Clear folds and reducedData
         int k;
         for(k = 0; k < 10; k++)
         {
             freeDataSet(folds[k]);
         }
-        free(folds);
-
+        free(folds);	    
+	freeDataSet(reducedData);	    
     }
 	
     // Free the remaining variables
