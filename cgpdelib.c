@@ -2630,6 +2630,126 @@ DLL_EXPORT struct dataSet ** generateFolds(struct dataSet * data)
 	return folds;
 }
 
+/* 
+	Reduce the sample size of the dataset 
+	Utilizes only a percentage of the dataset sample size
+*/
+DLL_EXPORT struct dataSet * reduceSampleSize(struct dataSet * data, double percentage)
+{
+	if(percentage <= 0.0 || percentage >= 1.0)
+	{
+		return data;
+	}
+
+	int i, j, l;
+	struct dataSet * reducedData = (struct dataSet *)malloc(sizeof(struct dataSet));
+
+	reducedData->numInputs = data->numInputs;
+	reducedData->numOutputs = data->numOutputs;
+	reducedData->numSamples = (int) (percentage * data->numSamples);
+
+	// allocate memory for the data
+	reducedData->inputData = (double**)malloc(reducedData->numSamples * sizeof(double*));
+	reducedData->outputData = (double**)malloc(reducedData->numSamples * sizeof(double*));
+
+	for (i = 0; i < reducedData->numSamples; i++) 
+	{
+		reducedData->inputData[i] = (double*)malloc(reducedData->numInputs * sizeof(double));
+		reducedData->outputData[i] = (double*)malloc(reducedData->numOutputs * sizeof(double));
+	}	
+
+	// count the number of instances of each class
+	int * class_size = (int *)malloc(data->numOutputs * sizeof(int));
+	for(i = 0; i < data->numOutputs; i++)
+	{
+		class_size[i] = 0;
+	}
+
+	for(i = 0; i < data->numOutputs; i++) // for each class
+	{
+		for(j = 0; j < data->numSamples; j++) // for each instance
+		{
+			if(data->outputData[j][i] == 1.0)
+			{
+				class_size[i] = class_size[i] + 1;
+			}
+		}		
+	}	
+
+	// apply the percentage reduction to each class size
+	for(i = 0; i < data->numOutputs; i++)
+	{
+		class_size[i] = (int) (percentage * class_size[i]);
+	}	
+
+	// adjust the differences between the class_size and the reducedData->numSamples
+	int sum = 0;
+	for(i = 0; i < data->numOutputs; i++)
+	{
+		sum += class_size[i];
+	}
+	
+	int diff = reducedData->numSamples - sum;
+	
+	int counter = 0;
+	for(i = 0; i < diff; i++)
+	{
+		class_size[counter] = class_size[counter] + 1;
+
+		counter++;
+		if(counter == reducedData->numOutputs)
+		{
+			counter = 0;
+		}
+	}
+
+	// keep the same class proportion during the reduction
+	int class_counter = 0;
+	int sample_counter = 0;
+	int flag_sample_max = 0;
+
+	for(i = 0; i < data->numOutputs; i++) // for each class
+	{
+		for(j = 0; j < data->numSamples; j++) // for each instance
+		{
+			if(data->outputData[j][i] == 1.0)
+			{
+				for (l = 0; l < data->numInputs; l++) 
+				{
+					reducedData->inputData[sample_counter][l] = data->inputData[j][l];
+				}
+
+				for (l = 0; l < data->numOutputs; l++) 
+				{
+					reducedData->outputData[sample_counter][l] = data->outputData[j][l];
+				}
+
+				sample_counter++;	
+				if(sample_counter == reducedData->numSamples)
+				{
+					flag_sample_max = 1;
+					break;			
+				}
+
+				class_counter++;
+				if(class_counter == class_size[i])
+				{
+					class_counter = 0;
+					break;
+				}
+			}
+		}
+
+		if(flag_sample_max == 1)
+		{
+			break;
+		}
+	}
+
+	free(class_size);
+	return reducedData;
+}
+
 /* Randomly distributes the folds for the training and validation sets */
 
 DLL_EXPORT void getIndex(int * training_index, int * validation_index, int testing_index, unsigned int * seed)
