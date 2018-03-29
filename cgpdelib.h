@@ -1542,6 +1542,8 @@ DLL_EXPORT struct dataSet *initialiseDataSetFromFile(char const *file);
 DLL_EXPORT void shuffleData(struct dataSet *data, unsigned int * seed);
 
 DLL_EXPORT struct dataSet ** generateFolds(struct dataSet * data);
+	
+DLL_EXPORT struct dataSet * reduceSampleSize(struct dataSet * data, double percentage);
 
 DLL_EXPORT void getIndex(int * training_index, int * validation_index, int testing_index, unsigned int * seed);
 
