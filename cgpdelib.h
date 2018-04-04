@@ -1367,6 +1367,7 @@ DLL_EXPORT int getNumChromosomeNodes(struct chromosome *chromo);
 */
 DLL_EXPORT int getNumChromosomeActiveNodes(struct chromosome *chromo);
 
+DLL_EXPORT int getChromosomeDepth(struct chromosome *chromo);
 
 /*
 	Function: getNumChromosomeOutputs
