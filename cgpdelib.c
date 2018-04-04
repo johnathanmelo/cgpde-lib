@@ -130,6 +130,7 @@ static int getNumChromosomeWeights(struct chromosome *chromo);
 /* chromosome functions */
 static void setChromosomeActiveNodes(struct chromosome *chromo);
 static void recursivelySetActiveNodes(struct chromosome *chromo, int nodeIndex);
+static void recursivelySearchDepth(struct chromosome *chromo, int nodeIndex, int currentDepth, int *maxDepth);
 static void sortChromosomeArray(struct chromosome **chromoArray, int numChromos);
 static void getBestChromosome(struct chromosome **parents, struct chromosome **children, int numParents, int numChildren, struct chromosome *best);
 static void saveChromosomeLatexRecursive(struct chromosome *chromo, int index, FILE *fp);
@@ -2366,6 +2367,50 @@ static void recursivelySetActiveNodes(struct chromosome *chromo, int nodeIndex) 
 	}
 }
 
+static void recursivelySearchDepth(struct chromosome *chromo, int nodeIndex, int currentDepth, int *maxDepth)
+{
+	int i;
+
+	/* if the given node is an input, stop */
+	if (nodeIndex < chromo->numInputs) 
+	{
+		if( currentDepth > (*maxDepth) )
+		{
+			(*maxDepth) = currentDepth;
+		}
+		return;
+	}
+
+	currentDepth++;
+
+	/* recursively log all the nodes to which the current nodes connect as active */
+	for (i = 0; i < chromo->nodes[nodeIndex - chromo->numInputs]->actArity; i++) 
+	{
+		recursivelySearchDepth(chromo, chromo->nodes[nodeIndex - chromo->numInputs]->inputs[i], currentDepth, maxDepth);
+	}
+}
+
+/*
+	get the depth of the given chromosome
+	depth is defined as the largest number of active nodes between the input and output
+*/
+DLL_EXPORT int getChromosomeDepth(struct chromosome *chromo)
+{
+	int i;
+	int maxDepth = -1, currentDepth = 0;
+
+	removeInactiveNodes(chromo);
+	
+	for(i = 0; i < chromo->numOutputs; i++)
+	{
+		currentDepth = 0;
+
+		// begin a recursive search the maximum depth
+		recursivelySearchDepth(chromo, chromo->outputNodes[i], currentDepth, &maxDepth);
+	}
+
+	return maxDepth;
+}
 
 /*
 	Sorts the given array of chromosomes by fitness, lowest to highest
