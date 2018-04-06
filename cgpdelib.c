@@ -2369,7 +2369,7 @@ static void recursivelySetActiveNodes(struct chromosome *chromo, int nodeIndex) 
 
 static void recursivelySearchDepth(struct chromosome *chromo, int nodeIndex, int currentDepth, int *maxDepth)
 {
-	if( nodeIndex - chromo->numInputs + 1 + currentDepth < (*maxDepth) )
+	if( nodeIndex - chromo->numInputs + 1 + currentDepth <= (*maxDepth) )
 	{
 		return;
 	}
