@@ -130,7 +130,7 @@ static int getNumChromosomeWeights(struct chromosome *chromo);
 /* chromosome functions */
 static void setChromosomeActiveNodes(struct chromosome *chromo);
 static void recursivelySetActiveNodes(struct chromosome *chromo, int nodeIndex);
-static void recursivelySearchDepth(struct chromosome *chromo, int nodeIndex, int currentDepth, int *maxDepth);
+static int recursivelySearchDepth(struct chromosome *chromo, int nodeIndex, int currentDepth, int *maxDepth, int * depthPerNode, int * buffer);
 static void sortChromosomeArray(struct chromosome **chromoArray, int numChromos);
 static void getBestChromosome(struct chromosome **parents, struct chromosome **children, int numParents, int numChildren, struct chromosome *best);
 static void saveChromosomeLatexRecursive(struct chromosome *chromo, int index, FILE *fp);
@@ -2367,15 +2367,8 @@ static void recursivelySetActiveNodes(struct chromosome *chromo, int nodeIndex) 
 	}
 }
 
-static void recursivelySearchDepth(struct chromosome *chromo, int nodeIndex, int currentDepth, int *maxDepth)
+static int recursivelySearchDepth(struct chromosome *chromo, int nodeIndex, int currentDepth, int *maxDepth, int * depthPerNode, int * buffer)
 {
-	if( nodeIndex - chromo->numInputs + 1 + currentDepth <= (*maxDepth) )
-	{
-		return;
-	}
-	
-	int i;
-
 	/* if the given node is an input, stop */
 	if (nodeIndex < chromo->numInputs) 
 	{
@@ -2383,16 +2376,46 @@ static void recursivelySearchDepth(struct chromosome *chromo, int nodeIndex, int
 		{
 			(*maxDepth) = currentDepth;
 		}
-		return;
+		return 0;
 	}
+
+	if ( depthPerNode[nodeIndex - chromo->numInputs] > 0 )
+	{
+		if( depthPerNode[nodeIndex - chromo->numInputs] + currentDepth > (*maxDepth) )
+		{			
+			(*maxDepth) = depthPerNode[nodeIndex - chromo->numInputs] + currentDepth;
+		}
+		return (depthPerNode[nodeIndex - chromo->numInputs]);
+	}
+
+	buffer[nodeIndex - chromo->numInputs] = 1;
+
+	int i, j;	
 
 	currentDepth++;
 
 	/* recursively log all the nodes to which the current nodes connect as active */
 	for (i = 0; i < chromo->nodes[nodeIndex - chromo->numInputs]->actArity; i++) 
 	{
-		recursivelySearchDepth(chromo, chromo->nodes[nodeIndex - chromo->numInputs]->inputs[i], currentDepth, maxDepth);
+		int res = recursivelySearchDepth(chromo, chromo->nodes[nodeIndex - chromo->numInputs]->inputs[i], currentDepth, maxDepth, depthPerNode, buffer);
+		
+		int sum = 1 + res;
+
+		for(j = 0; j < nodeIndex - chromo->numInputs; j++)
+		{
+			sum += buffer[j];
+			buffer[j] = 0;
+		}
+
+		if( sum > -depthPerNode[nodeIndex - chromo->numInputs] )
+		{
+			depthPerNode[nodeIndex - chromo->numInputs] = -sum;
+			buffer[nodeIndex - chromo->numInputs] = sum;
+		}
 	}
+
+	depthPerNode[nodeIndex - chromo->numInputs] = -depthPerNode[nodeIndex - chromo->numInputs];
+	return 0;
 }
 
 /*
@@ -2405,13 +2428,19 @@ DLL_EXPORT int getChromosomeDepth(struct chromosome *chromo)
 	int maxDepth = -1, currentDepth = 0;
 
 	removeInactiveNodes(chromo);
+
+	int * depthPerNode = (int*)malloc(chromo->numActiveNodes * sizeof(int));
+	memset(depthPerNode, 0, chromo->numActiveNodes * sizeof(int));
+
+	int * buffer = (int*)malloc(chromo->numActiveNodes * sizeof(int));
 	
 	for(i = 0; i < chromo->numOutputs; i++)
 	{
 		currentDepth = 0;
+		memset(buffer, 0, chromo->numActiveNodes * sizeof(int));
 
 		// begin a recursive search the maximum depth
-		recursivelySearchDepth(chromo, chromo->outputNodes[i], currentDepth, &maxDepth);
+		recursivelySearchDepth(chromo, chromo->outputNodes[i], currentDepth, &maxDepth, depthPerNode, buffer);
 	}
 
 	return maxDepth;
