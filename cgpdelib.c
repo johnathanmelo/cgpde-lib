@@ -2715,7 +2715,7 @@ DLL_EXPORT struct dataSet ** generateFolds(struct dataSet * data)
 */
 DLL_EXPORT struct dataSet * reduceSampleSize(struct dataSet * data, double percentage)
 {
-	if(percentage <= 0.0 || percentage >= 1.0)
+	if(percentage <= 0.001 || percentage >= 0.999)
 	{
 		return data;
 	}
