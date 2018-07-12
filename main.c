@@ -217,7 +217,10 @@ int main(void)
             freeDataSet(folds[k]);
         }
         free(folds);	    
-	freeDataSet(reducedData);	    
+	if(reducedData != mainData)
+        {
+            freeDataSet(reducedData);
+        }	    
     }
 	
     // Free the remaining variables
