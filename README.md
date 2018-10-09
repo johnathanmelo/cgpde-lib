@@ -8,6 +8,9 @@ It includes the CGPANN, CGPDE-IN, CGPDE-OUT-T, and CGPDE-OUT-V methods.
 Author: Johnathan M Melo Neto   
 Email: jmmn.mg@gmail.com
 
+
+J. M. Melo Neto, H. S. Bernardino and H. J. C. Barbosa, [**Hybridization of Cartesian Genetic Programming and Differential Evolution for Generating Classifiers Based on Neural Networks,**](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8477906&isnumber=8477640) 2018 IEEE Congress on Evolutionary Computation (CEC), Rio de Janeiro, Brazil, 2018, pp. 1-8.
+
 Credits of the original work are placed below.
 
 CGP Library
