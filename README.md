@@ -25,3 +25,26 @@ Email: andrew.turner@york.ac.uk
 License: Lesser General Public License (LGPL) 
 
 A. J. Turner and J. F. Miller. [**Introducing A Cross Platform Open Source Cartesian Genetic Programming Library**](http://andrewjamesturner.co.uk/files/GPEM2014.pdf). The Journal of Genetic Programming and Evolvable Machines, 2014, 16, 83-91.
+
+## To Install
+
+### On Linux
+
+#### From Source
+
+
+First you'll want to clone the repository:
+
+`git clone https://github.com/johnathamelo/cgpde-lib.git`
+
+Once that's finished, navigate to the Root directory. In this case it would be ./cgpde-lib:
+
+`cd ./cgpde-lib`
+
+Then run Makefile:
+
+`make main`
+
+Now you can run the algorithms by running:
+
+`./main`
